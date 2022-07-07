@@ -35,56 +35,57 @@ require 'csv'
 # convert CSV into array of arrays
 raw_data = CSV.parse("Sally Student,S001,Assignment 1,95\nJohnny Readerman,S002,Assignment 1,71\nTony Thinkerson,S003,Assignment 1,88\nJohnny Readerman,S002,Assignment 2,90\nSally Student,S001,Assignment 2,100\nTony Thinkerson,S003,Assignment 2,57\nSally Student,S001,Assignment 3,85\nTony Thinkerson,S003,Assignment 3,80")
 
-students = {} # {Sally: {grades: [95, 100, 85], average_grade: 93, letter_grade: "A"}}
+def calulate_grades(raw_data)
+  students = {} # {Sally: {grades: [95, 100, 85], average_grade: 93, letter_grade: "A"}}
 
-# assign each student to have an empty hash of data and start tracking their grades
-raw_data.each do |data|
-
-  if students[data[0]] == nil
-    students[data[0]] = {"grades" => [], "average_grade" => nil, "letter_grade" => nil}
-  end
-
-  if students[data[0]] != nil
-    students[data[0]]["grades"] << data[3].to_i
-  end
-  
-end
-
-# check for the average number of assignments 
-average = []
-students.each do |student|
-  average << student[1]["grades"].length
-end
-average_number_of_assignments = ((average.sum / 3.to_f) + 0.9).floor
-
-# check if any students are missing assignments (if they are, add 0's for each missing assignment) and get their average grade
-students.each do |student|
-  if student[1]["grades"].length < average_number_of_assignments
-    (average_number_of_assignments - student[1]["grades"].length).times do 
-      student[1]["grades"] << 0
+  # assign each student to have an empty hash of data and start tracking their grades
+  raw_data.each do |data|
+    if students[data[0]] == nil
+      students[data[0]] = {"grades" => [], "average_grade" => nil, "letter_grade" => nil}
+    end
+    if students[data[0]] != nil
+      students[data[0]]["grades"] << data[3].to_i
     end
   end
-  student[1]["average_grade"] = student[1]["grades"].sum / student[1]["grades"].length
-end
 
-# convert the average grade into a letter grade
-students.each do |student|
-  if student[1]["average_grade"] >= 90 
-    student[1]["letter_grade"] = "A"
-  elsif student[1]["average_grade"] >= 80 
-    student[1]["letter_grade"] = "B"
-  elsif student[1]["average_grade"] >= 70 
-    student[1]["letter_grade"] = "C"
-  elsif student[1]["average_grade"] >= 55 
-    student[1]["letter_grade"] = "D"
-  else
-    student[1]["letter_grade"] = "F"
+  # check for the average number of assignments 
+  average = []
+  students.each do |student|
+    average << student[1]["grades"].length
+  end
+  average_number_of_assignments = ((average.sum / 3.to_f) + 0.9).floor
+
+  # check if any students are missing assignments (if they are, add 0's for each missing assignment) and get their average grade
+  students.each do |student|
+    if student[1]["grades"].length < average_number_of_assignments
+      (average_number_of_assignments - student[1]["grades"].length).times do 
+        student[1]["grades"] << 0
+      end
+    end
+    student[1]["average_grade"] = student[1]["grades"].sum / student[1]["grades"].length
+  end
+
+  # convert the average grade into a letter grade
+  students.each do |student|
+    if student[1]["average_grade"] >= 90 
+      student[1]["letter_grade"] = "A"
+    elsif student[1]["average_grade"] >= 80 
+      student[1]["letter_grade"] = "B"
+    elsif student[1]["average_grade"] >= 70 
+      student[1]["letter_grade"] = "C"
+    elsif student[1]["average_grade"] >= 55 
+      student[1]["letter_grade"] = "D"
+    else
+      student[1]["letter_grade"] = "F"
+    end
+  end
+
+  # uncomment to see all the data
+  # pp students
+
+  students.each do |student,data|
+    puts "#{student} #{data["letter_grade"]}"
   end
 end
 
-# uncomment to see all the data
-pp students
-
-students.each do |student,data|
-  puts "#{student} #{data["letter_grade"]}"
-end
+calulate_grades(raw_data)
